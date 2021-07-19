@@ -4,6 +4,7 @@ import LoadingPage from "./LoadingPage.js"
 
 import Actions from './Actions.js'
 
+// créer un élément HTML qui s'affichera sur une ligne 
 const row = (bill) => {
   return (`
     <tr>
@@ -17,14 +18,17 @@ const row = (bill) => {
       </td>
     </tr>
     `)
-  }
+}
 
+// Traitement de la liste des notes de frais
+// converti en string et ajoute un séparateur
 const rows = (data) => {
   return (data && data.length) ? data.map(bill => row(bill)).join("") : ""
 }
 
 export default ({ data: bills, loading, error }) => {
   
+  // Affichage justificatif de la note de frais
   const modal = () => (`
     <div class="modal fade" id="modaleFile" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -42,12 +46,14 @@ export default ({ data: bills, loading, error }) => {
     </div>
   `)
 
+  // vérifier la présence de loading ou error
   if (loading) {
     return LoadingPage()
   } else if (error) {
     return ErrorPage(error)
   }
   
+
   return (`
     <div class='layout'>
       ${VerticalLayout(120)}
