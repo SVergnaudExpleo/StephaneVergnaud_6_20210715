@@ -4,3 +4,10 @@ export default [
     'jean.limbert@billed.com',
     'joanna.binet@billed.com'
 ]
+
+/*
+admin log 
+johndoe@email.com
+azerty
+
+*/
