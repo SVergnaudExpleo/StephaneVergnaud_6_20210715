@@ -1,7 +1,6 @@
 import VerticalLayout from './VerticalLayout.js'
 import ErrorPage from "./ErrorPage.js"
 import LoadingPage from "./LoadingPage.js"
-
 import Actions from './Actions.js'
 
 // créer un élément HTML qui s'affichera sur une ligne 
@@ -20,11 +19,29 @@ const row = (bill) => {
     `)
 }
 
-// Traitement de la liste des notes de frais
-// converti en string et ajoute un séparateur
+// Fonction de tri antichronologique des note de frais
+const rows = (data) => {
+  if (data && data.length) {
+    var tableTrier = data.sort(function (a, b) {
+      if (a.dateBrut < b.dateBrut) {
+        return 1
+      } else {
+        return -1
+      }
+    })
+    console.log(tableTrier)
+    return tableTrier.map(bill => row(bill)).join("")
+  } else {
+    return ""
+  }
+}
+
+// ancienne fonction sans tri des note de frais
+/*
 const rows = (data) => {
   return (data && data.length) ? data.map(bill => row(bill)).join("") : ""
 }
+*/
 
 export default ({ data: bills, loading, error }) => {
   
@@ -53,7 +70,7 @@ export default ({ data: bills, loading, error }) => {
     return ErrorPage(error)
   }
   
-
+  // Création de la page web
   return (`
     <div class='layout'>
       ${VerticalLayout(120)}
