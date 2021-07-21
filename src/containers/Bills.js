@@ -20,10 +20,11 @@ export default class {
     this.onNavigate(ROUTES_PATH['NewBill'])
   }
 
+  // Action au clic sur le bouton oeuil
   handleClickIconEye = (icon) => {
     const billUrl = icon.getAttribute("data-bill-url")
-    const imgWidth = Math.floor($('#modaleFile').width() * 0.5)
-    $('#modaleFile').find(".modal-body").html(`<div style='text-align: center;'><img width=${imgWidth} src=${billUrl} /></div>`)
+    //const imgWidth = Math.floor($('#modaleFile').width() * 0.5) // dimension de l'image de la modale
+    $('#modaleFile').find(".modal-body").html(`<div style='text-align: center;'><img width=100% src=${billUrl} /></div>`)
     $('#modaleFile').modal('show')
   }
 
@@ -57,7 +58,7 @@ export default class {
             }
           })
           .filter(bill => bill.email === userEmail)
-          console.log('length', bills.length)
+          //console.log('length', bills.length)
         return bills
       })
       .catch(error => error)
