@@ -26,6 +26,7 @@ export const filteredBills = (data, status) => {
     }) : []
 }
 
+// création des miniatures cliquable
 export const card = (bill) => {
   const firstAndLastNames = bill.email.split('@')[0]
   const firstName = firstAndLastNames.includes('.') ?
@@ -66,7 +67,9 @@ export const getStatus = (index) => {
   }
 }
 
+// Gestion des listes deroulantes de admin dashboard
 export default class {
+  // construction de l'affichage des flèches
   constructor({ document, onNavigate, firestore, bills, localStorage }) {
     this.document = document
     this.onNavigate = onNavigate
@@ -85,20 +88,38 @@ export default class {
     if (typeof $('#modaleFileAdmin1').modal === 'function') $('#modaleFileAdmin1').modal('show')
   }
 
+  // générerl'affichage du détail de la NDF
+  // bug généré par le compteur et le passage par une reinitialisation de l'affichage
+  handleEditTicket(e, bill, bills) {
+    if (this.id === undefined || this.id !== bill.id) this.id = bill.id
+      bills.forEach(b => {
+        $(`#open-bill${b.id}`).css({ background: '#0D5AE5' }) // appliquer un background de base à la liste
+      })
+      $(`#open-bill${bill.id}`).css({ background: '#2A2B35' }) // appliquer un background a NDF selectionner
+      $('.dashboard-right-container div').html(DashboardFormUI(bill))
+      $('.vertical-navbar').css({ height: '150vh' })
+
+    $('#icon-eye-d').click(this.handleClickIconEye)
+    $('#btn-accept-bill').click((e) => this.handleAcceptSubmit(e, bill))
+    $('#btn-refuse-bill').click((e) => this.handleRefuseSubmit(e, bill))
+  }
+  
+  /*
   handleEditTicket(e, bill, bills) {
     if (this.counter === undefined || this.id !== bill.id) this.counter = 0
+    this.counter = 0
     if (this.id === undefined || this.id !== bill.id) this.id = bill.id
     if (this.counter % 2 === 0) {
       bills.forEach(b => {
-        $(`#open-bill${b.id}`).css({ background: '#0D5AE5' })
+        $(`#open-bill${b.id}`).css({ background: '#0D5AE5' }) // appliquer un background de base à la liste
       })
-      $(`#open-bill${bill.id}`).css({ background: '#2A2B35' })
+      $(`#open-bill${bill.id}`).css({ background: '#2A2B35' }) // appliquer un background a NDF selectionner
       $('.dashboard-right-container div').html(DashboardFormUI(bill))
       $('.vertical-navbar').css({ height: '150vh' })
       this.counter ++
-    } else {
+    }
+    else {
       $(`#open-bill${bill.id}`).css({ background: '#0D5AE5' })
-
       $('.dashboard-right-container div').html(`
         <div id="big-billed-icon"> ${BigBilledIcon} </div>
       `)
@@ -109,6 +130,7 @@ export default class {
     $('#btn-accept-bill').click((e) => this.handleAcceptSubmit(e, bill))
     $('#btn-refuse-bill').click((e) => this.handleRefuseSubmit(e, bill))
   }
+  */
 
   handleAcceptSubmit = (e, bill) => {
     const newBill = {
@@ -130,6 +152,7 @@ export default class {
     this.onNavigate(ROUTES_PATH['Dashboard'])
   }
 
+  // dérouler une liste
   handleShowTickets(e, bills, index) {
     if (this.counter === undefined || this.index !== index) this.counter = 0
     if (this.index === undefined || this.index !== index) this.index = index
@@ -145,6 +168,7 @@ export default class {
       this.counter ++
     }
 
+    // écoute du clique sur le bills
     bills.forEach(bill => {
       $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills))
     })

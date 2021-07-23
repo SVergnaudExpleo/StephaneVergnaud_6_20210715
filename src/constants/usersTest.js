@@ -8,7 +8,9 @@ export default [
 
 /*
 admin log 
-johndoe@email.com
+
+admin@mail.com
 azerty
 
+johndoe@email.com
 */
