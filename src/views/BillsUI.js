@@ -29,7 +29,6 @@ const rows = (data) => {
         return -1
       }
     })
-    //console.log(tableTrier)
     return tableTrier.map(bill => row(bill)).join("")
   } else {
     return ""

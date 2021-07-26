@@ -9,7 +9,9 @@ describe("Given I am connected as an employee", () => {
       const html = BillsUI({ data: []})
       document.body.innerHTML = html
       //to-do write expect expression
-      expect(document.body.innerHTML).toContain("active-icon"); // la className doit être "active-icon"
+      console.log(html)
+      const test = screen.getAllByText(/[s/S]/)
+      expect(html).toContain("content-title"); // la className doit être "active-icon"
     })
 
     
