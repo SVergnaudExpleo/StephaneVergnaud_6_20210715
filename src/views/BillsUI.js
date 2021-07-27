@@ -20,20 +20,23 @@ const row = (bill) => {
 }
 
 // Fonction de tri antichronologique des note de frais
-const rows = (data) => {
+
+export const rows = (data) => {
   if (data && data.length) {
-    var tableTrier = data.sort(function (a, b) {
+    const antiChrono = (a, b) => ((a.dateBrut < b.dateBrut) ? 1 : -1)
+    var data = data.sort(antiChrono/*function fonctionTri (a, b) {
       if (a.dateBrut < b.dateBrut) {
         return 1
       } else {
         return -1
       }
-    })
-    return tableTrier.map(bill => row(bill)).join("")
+    }*/)
+    return data.map(bill => row(bill)).join("")
   } else {
     return ""
   }
 }
+
 
 // ancienne fonction sans tri des note de frais
 /*
