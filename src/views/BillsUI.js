@@ -1,9 +1,9 @@
 import VerticalLayout from './VerticalLayout.js'
 import ErrorPage from "./ErrorPage.js"
 import LoadingPage from "./LoadingPage.js"
-
 import Actions from './Actions.js'
 
+// créer un élément HTML qui s'affichera sur une ligne 
 const row = (bill) => {
   return (`
     <tr>
@@ -17,14 +17,37 @@ const row = (bill) => {
       </td>
     </tr>
     `)
-  }
+}
 
+// Fonction de tri antichronologique des note de frais
+
+export const rows = (data) => {
+  if (data && data.length) {
+    const antiChrono = (a, b) => ((a.dateBrut < b.dateBrut) ? 1 : -1)
+    var data = data.sort(antiChrono/*function fonctionTri (a, b) {
+      if (a.dateBrut < b.dateBrut) {
+        return 1
+      } else {
+        return -1
+      }
+    }*/)
+    return data.map(bill => row(bill)).join("")
+  } else {
+    return ""
+  }
+}
+
+
+// ancienne fonction sans tri des note de frais
+/*
 const rows = (data) => {
   return (data && data.length) ? data.map(bill => row(bill)).join("") : ""
 }
+*/
 
 export default ({ data: bills, loading, error }) => {
   
+  // Affichage justificatif de la note de frais
   const modal = () => (`
     <div class="modal fade" id="modaleFile" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -42,12 +65,14 @@ export default ({ data: bills, loading, error }) => {
     </div>
   `)
 
+  // vérifier la présence de loading ou error
   if (loading) {
     return LoadingPage()
   } else if (error) {
     return ErrorPage(error)
   }
   
+  // Création de la page web
   return (`
     <div class='layout'>
       ${VerticalLayout(120)}

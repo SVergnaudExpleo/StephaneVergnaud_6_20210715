@@ -15,11 +15,28 @@ export default class NewBill {
     this.fileName = null
     new Logout({ document, localStorage, onNavigate })
   }
+
+  // Validation du type de fichier justificatif
   handleChangeFile = e => {
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
     const filePath = e.target.value.split(/\\/g)
     const fileName = filePath[filePath.length-1]
-    this.firestore
+
+    const tableAutorizedFile = [".jpeg", ".jpg", ".png"]
+    var compteur = 0
+
+    tableAutorizedFile.forEach(function (fileType) {
+      var fileTypeRegex = new RegExp(fileType, 'i')
+      if (fileName.search(fileTypeRegex) <= -1) {
+        compteur++
+      }
+    });
+    if (compteur == tableAutorizedFile.length) {
+      var test = document.querySelector(`input[data-testid="file"]`)
+      test.value = ""
+      alert("le type de fichier doit être ,.jpeg, .jpg, .png.\r\ Vous avez utilisé le fichier ci-dessous \r\ \r\ " + fileName)
+    } else {
+      this.firestore
       .storage
       .ref(`justificatifs/${fileName}`)
       .put(file)
@@ -28,7 +45,9 @@ export default class NewBill {
         this.fileUrl = url
         this.fileName = fileName
       })
+    }
   }
+
   handleSubmit = e => {
     e.preventDefault()
     console.log('e.target.querySelector(`input[data-testid="datepicker"]`).value', e.target.querySelector(`input[data-testid="datepicker"]`).value)
