@@ -54,10 +54,10 @@ describe("Given I am connected as an employee", () => {
     test ("then user click on new bills, new bills must be display", () => {
       const html = BillsUI({data: bills})
       document.body.innerHTML = html
-      new BillsContainer({document: document},{onNavigate: 'NewBill'}, {firestore: 1}, {localStorage: "mail@mail.com"})
+      new BillsContainer({document: document},{onNavigate: 1}, {firestore: 1}, {localStorage: "mail@mail.com"})
       const buttonNewBill = document.querySelector(`button[data-testid="btn-new-bill"]`)
       $(buttonNewBill).click()
-      expect(6).toEqual(1)
+      expect(buttonNewBill).toEqual(1)
     })
 
     test ("then user click on eye icon, bills justification must be display", () => {

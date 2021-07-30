@@ -15,8 +15,8 @@ export default class {
     new Logout({ document, localStorage, onNavigate })
   }
 
-  handleClickNewBill = (e) => {
-    this.onNavigate(ROUTES_PATH['NewBill'])
+  handleClickNewBill = () => {
+    this.onNavigate = (ROUTES_PATH['NewBill'])
   }
 
   // Action au clic sur le bouton oeuil
