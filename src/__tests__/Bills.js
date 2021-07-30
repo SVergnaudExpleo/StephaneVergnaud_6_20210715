@@ -1,20 +1,27 @@
 import { screen } from "@testing-library/dom"
 import {default as BillsUI} from "../views/BillsUI.js"
 import { bills } from "../fixtures/bills.js"
-import LoadingPage from "../views/LoadingPage"
 import ErrorPage from "../views/ErrorPage"
-import {default as BillsContainer} from "../containers/Bills"
+import Bills, {default as BillsContainer} from "../containers/Bills"
+import {default as LoadingPage} from "../views/LoadingPage"
+import { ROUTES_PATH } from '../constants/routes.js'
 
+import {default as VerticalLayout} from "../views/VerticalLayout"
+import {default as LoginUI} from "../views/LoginUI"
+import {default as Login} from "../containers/Login"
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
 
     // on test que l'icone est bien mis en valeur
     test("Then bill icon in vertical layout should be highlighted", () => {
+
+      VerticalLayout(120)
       const html = BillsUI({ data: [] })
       document.body.innerHTML = html
-      //to-do write expect expression     
-      expect(html).toContain("active-icon"); // id = "layout-icon1" test id = "icon-window" la className doit être "active-icon"
+      //to-do write expect expression
+      //expect(html).toContain("active-icon"); // id = "layout-icon1" test id = "icon-window" la className doit être "active-icon"
+      expect(1).toEqual(5)
     })
 
     // on test que le tri decroissant est bien effectué
@@ -28,28 +35,56 @@ describe("Given I am connected as an employee", () => {
       expect(dates).toEqual(datesSorted) 
     })
 
-    test ("affichage loading page", () => {
+    test ("Then when on loading, loading page must be display", () => {
       const html = BillsUI({data: bills,loading: 1})
       document.body.innerHTML = html
       const loadingTest = LoadingPage()
       expect(html).toContain(loadingTest)
     })
 
-    test ("affichage error page", () => {
+    test ("Then when error, error page must bu display", () => {
       const html = BillsUI({error: 1})
       document.body.innerHTML = html
       const loadingTest = ErrorPage(1)
       expect(html).toContain(loadingTest)
     })
 
-    test ("bills container test", () => {
-      const html = BillsUI({ data: bills })
+
+
+    test ("then user click on new bills, new bills must be display", () => {
+      const html = BillsUI({data: bills})
       document.body.innerHTML = html
-      var onNavigate = 1
-      var firestore = 1
-      var localStorage = 1
-      var BillsContainerTest = new BillsContainer(document, onNavigate, firestore, localStorage)
-      expect(BillsContainerTest).toEqual(1)
-    }) 
+      new BillsContainer({document: document},{onNavigate: 'NewBill'}, {firestore: 1}, {localStorage: "mail@mail.com"})
+      const buttonNewBill = document.querySelector(`button[data-testid="btn-new-bill"]`)
+      $(buttonNewBill).click()
+      expect(6).toEqual(1)
+    })
+
+    test ("then user click on eye icon, bills justification must be display", () => {
+      const html = BillsUI({data: bills})
+      document.body.innerHTML = html
+      new BillsContainer({document: document},{onNavigate: 1}, {firestore: 1}, {localStorage: "mail@mail.com"})
+      const iconEye = document.querySelector(`div[data-testid="icon-eye"]`)
+      $(iconEye).click()
+      expect(iconEye).toEqual(document.querySelector(`div[data-testid="icon-eye"]`))
+    })
+  })
+})
+
+
+import firebase from "../__mocks__/firebase"
+import mail from "../assets/svg/mail.js"
+
+// test d'intégration GET
+describe("Given I am a user connected as employee", () => {
+  describe("When I navigate to employee Dashboard", () => {
+    test("fetches bills from mock API GET", async () => {
+      const html = BillsUI({data: bills})
+      document.body.innerHTML = html
+      const getSpy = jest.spyOn(new Bills({document: document}, {localStorage: "mail@mail.com"}), "get")
+      const billsTest = await bills.get()
+      expect(getSpy).toHaveBeenCalledTimes(1)
+      expect(billsTest.data.length).toBe(4)
+    })
   })
 })
