@@ -1,14 +1,15 @@
 import { screen } from "@testing-library/dom"
 import {default as BillsUI} from "../views/BillsUI.js"
+import {default as NewBillUI } from "../views/NewBillUI"
 import { bills } from "../fixtures/bills.js"
 import ErrorPage from "../views/ErrorPage"
 import Bills, {default as BillsContainer} from "../containers/Bills"
+import {default as NewBillContainer} from "../containers/NewBill"
 import {default as LoadingPage} from "../views/LoadingPage"
-import { ROUTES_PATH } from '../constants/routes.js'
-
 import {default as VerticalLayout} from "../views/VerticalLayout"
-import {default as LoginUI} from "../views/LoginUI"
-import {default as Login} from "../containers/Login"
+import {ROUTES as ROUTES, ROUTES_PATH as ROUTES_PATH} from "../constants/routes.js"
+import {default as Router} from "../app/Router"
+
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
@@ -54,11 +55,22 @@ describe("Given I am connected as an employee", () => {
     test ("then user click on new bills, new bills must be display", () => {
       const html = BillsUI({data: bills})
       document.body.innerHTML = html
-      new BillsContainer({document: document},{onNavigate: 1}, {firestore: 1}, {localStorage: "mail@mail.com"})
+      new BillsContainer({document: document}, {onNavigate: 1}, {firestore: 1}, {localStorage: "mail@mail.com"})
       const buttonNewBill = document.querySelector(`button[data-testid="btn-new-bill"]`)
       $(buttonNewBill).click()
-      expect(buttonNewBill).toEqual(1)
+      const htmlNewBills = NewBillUI()
+      document.body.innerHTML = htmlNewBills
+      new NewBillContainer ({document: document}, {onNavigate: 1}, {firestore: 1}, {localStorage: "mail@mail.com"})
+      
+      expect(1).toEqual(5)
     })
+
+
+
+
+
+
+
 
     test ("then user click on eye icon, bills justification must be display", () => {
       const html = BillsUI({data: bills})
