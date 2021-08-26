@@ -1,8 +1,18 @@
+// import des librairie de test
+import { screen } from "@testing-library/dom"
 import '@testing-library/jest-dom'
 import userEvent from '@testing-library/user-event'
-import {getByTestId} from '@testing-library/dom'
+import {
+  getByLabelText,
+  getByText,
+  getByTestId,
+  queryByTestId,
+  // Tip: all queries are also exposed on an object
+  // called "queries" which you could import here as well
+  waitFor,
+} from '@testing-library/dom'
 
-import { screen } from "@testing-library/dom"
+// import des fonction du projet
 import {default as BillsUI} from "../views/BillsUI.js"
 import {default as NewBillUI } from "../views/NewBillUI"
 import { bills } from "../fixtures/bills.js"
@@ -10,41 +20,57 @@ import ErrorPage from "../views/ErrorPage"
 import Bills, {default as BillsContainer} from "../containers/Bills"
 import {default as NewBillContainer} from "../containers/NewBill"
 import {default as LoadingPage} from "../views/LoadingPage"
-import {default as VerticalLayout} from "../views/VerticalLayout"
-import {ROUTES as ROUTES, ROUTES_PATH as ROUTES_PATH} from "../constants/routes.js"
-
 
 import {default as Router} from "../app/Router"
+import Login, { PREVIOUS_LOCATION } from "../containers/Login.js"
+import firestore from "../app/Firestore"
+import localStorage from '../__mocks__/localStorage'
 
-
+beforeAll(()=>{
+  document.body.innerHTML = ''
+})
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
-
-    // on test que l'icone est bien mis en valeur
     it("Then bill icon in vertical layout should be highlighted", async () => {
-
-      document.body.innerHTML = BillsUI({ data: [] })
-      VerticalLayout()
-      document.location = '/'
-
-      const test = document
-      console.log("je suis un test = "+test)
       
-  
+      document.body.innerHTML = '<div id="root">page connection</div>'
+      document.location = '/'
+      await Router()
+      new Login({ document, localStorage, onNavigate, PREVIOUS_LOCATION, firestore })
+      const userMail = getByTestId(document, 'employee-email-input')
+      const userPasword = getByTestId(document, 'employee-password-input')
+      const userSubmit = getByTestId(document, 'employee-login-button')
+      userMail.value = 'mail@mail.com'
+      userPasword.value = 'azerty'
+      userSubmit.click
+ 
+
+      expect(document.body).toBe(1)
+      
+      /**
+      
+
+      //const html = BillsUI({ data: []})
+      document.body.innerHTML = html
+      document.location = '/#employee/bills'
+      await Router()
+
       //to-do write expect expression
-      //expect(document.querySelector('#layout-icon1').className).toContain("active-icon"); // id = "layout-icon1" test id = "icon-window" la className doit être "active-icon"
-      expect(document).toEqual(VerticalLayout(120))
+      const iconeHightlighted = document.querySelector("#layout-icon1") // id = "layout-icon1" test id = "icon-window" la className doit être "active-icon"
+      expect(document.location).toBe(document.body)
+      
+      **/
   })
 
+}) //retirer acolade
 
 
 
 
 
 
-
-
+/** 
 
 
 
@@ -104,9 +130,11 @@ describe("Given I am connected as an employee", () => {
       expect(iconEye).toEqual(document.querySelector(`div[data-testid="icon-eye"]`))
     })
   })
+  */
 })
 
 
+/** 
 import firebase from "../__mocks__/firebase"
 import mail from "../assets/svg/mail.js"
 import { async } from 'rsvp'
@@ -124,3 +152,4 @@ describe("Given I am a user connected as employee", () => {
     })
   })
 })
+*/
