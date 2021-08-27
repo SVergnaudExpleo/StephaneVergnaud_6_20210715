@@ -7,6 +7,7 @@ import {
   getByText,
   getByTestId,
   queryByTestId,
+  fireEvent,
   // Tip: all queries are also exposed on an object
   // called "queries" which you could import here as well
   waitFor,
@@ -25,6 +26,8 @@ import {default as Router} from "../app/Router"
 import Login, { PREVIOUS_LOCATION } from "../containers/Login.js"
 import firestore from "../app/Firestore"
 import localStorage from '../__mocks__/localStorage'
+import LoginUI from "../views/LoginUI"
+import { ROUTES } from "../constants/routes"
 
 beforeAll(()=>{
   document.body.innerHTML = ''
@@ -34,33 +37,84 @@ describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
     it("Then bill icon in vertical layout should be highlighted", async () => {
       
-      document.body.innerHTML = '<div id="root">page connection</div>'
-      document.location = '/'
-      await Router()
-      new Login({ document, localStorage, onNavigate, PREVIOUS_LOCATION, firestore })
-      const userMail = getByTestId(document, 'employee-email-input')
-      const userPasword = getByTestId(document, 'employee-password-input')
-      const userSubmit = getByTestId(document, 'employee-login-button')
-      userMail.value = 'mail@mail.com'
-      userPasword.value = 'azerty'
-      userSubmit.click
  
 
-      expect(document.body).toBe(1)
       
-      /**
-      
+      ///////////////////////////////////////////////////////
+/**
+    document.body.innerHTML = LoginUI()
+    const inputData = {
+      email: "johndoe@email.com",
+      password: "azerty"
+    }
+    const inputEmailUser = screen.getByTestId("employee-email-input")
+    fireEvent.change(inputEmailUser, { target: { value: inputData.email } })
+    const inputPasswordUser = screen.getByTestId("employee-password-input")
+    fireEvent.change(inputPasswordUser, { target: { value: inputData.password } })
+    const form = screen.getByTestId("form-employee")
+    // localStorage should be populated with form data
+    Object.defineProperty(window, "localStorage", {
+      value: {
+        getItem: jest.fn(() => null),
+        setItem: jest.fn(() => null)
+      },
+      writable: true
 
-      //const html = BillsUI({ data: []})
+    })
+    // we have to mock navigation to test it
+    const onNavigate = (pathname) => {
+      document.body.innerHTML = ROUTES({ pathname })
+    }
+    let PREVIOUS_LOCATION = ''
+    const firebase = jest.fn()
+    const login = new Login({
+      document,
+      localStorage: window.localStorage,
+      onNavigate,
+      PREVIOUS_LOCATION,
+      firebase
+    })
+    const handleSubmit = jest.fn(login.handleSubmitEmployee)    
+    form.addEventListener("submit", handleSubmit)
+    fireEvent.submit(form)
+*/
+////////////////////////////////////////////////////////////////////
+
+
+      //document.body.innerHTML = '<div id="root">page connection</div>'
+      //document.location = '/'
+      //await Router()
+      //new Login({ document, localStorage, onNavigate, PREVIOUS_LOCATION, firestore })
+
+      document.body.innerHTML = LoginUI()
+      const userMail = getByTestId(document, 'employee-email-input')
+      const userPasword = getByTestId(document, 'employee-password-input')
+      userMail.value = 'mail@mail.com'
+      userPasword.value = 'azerty'
+      const userSubmit = getByTestId(document, 'form-employee')
+      fireEvent.submit(userSubmit)
+      
+      //let test = 
+
+      Object.defineProperty(window, "localStorage", {
+        value: {
+          getItem: jest.fn(() => null),
+          setItem: jest.fn(() => user.type = "Employee")
+        },
+        writable: true
+      })
+
+
+      //expect(window.localStorage).toBe(2)
+
+      const html = BillsUI({ data: []})
       document.body.innerHTML = html
-      document.location = '/#employee/bills'
-      await Router()
 
       //to-do write expect expression
-      const iconeHightlighted = document.querySelector("#layout-icon1") // id = "layout-icon1" test id = "icon-window" la className doit être "active-icon"
-      expect(document.location).toBe(document.body)
-      
-      **/
+      //const iconeHightlighted = document.querySelector("#layout-icon1") // id = "layout-icon1" test id = "icon-window" la className doit être "active-icon"
+      expect(document.body).toBe(2)
+    
+
   })
 
 }) //retirer acolade
@@ -71,9 +125,6 @@ describe("Given I am connected as an employee", () => {
 
 
 /** 
-
-
-
     // on test que le tri decroissant est bien effectué
     // on compare les dates (normalement triées) avec les dates triées par le test
     it("Then bills should be ordered from earliest to latest", () => {
