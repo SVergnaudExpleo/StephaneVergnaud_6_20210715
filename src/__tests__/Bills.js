@@ -36,12 +36,19 @@ beforeAll(()=>{
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
     it("Then bill icon in vertical layout should be highlighted", async () => {
-      
- 
 
-      
-      ///////////////////////////////////////////////////////
-/**
+      /** 
+      document.body.innerHTML = LoginUI()
+      const userMail = getByTestId(document, 'employee-email-input')
+      const userPasword = getByTestId(document, 'employee-password-input')
+      userMail.value = 'mail@mail.com'
+      userPasword.value = 'azerty'
+      const userSubmit = getByTestId(document, 'form-employee')
+      fireEvent.submit(userSubmit)
+    */
+
+    ///////////////////////////////////////////////////////
+
     document.body.innerHTML = LoginUI()
     const inputData = {
       email: "johndoe@email.com",
@@ -59,7 +66,6 @@ describe("Given I am connected as an employee", () => {
         setItem: jest.fn(() => null)
       },
       writable: true
-
     })
     // we have to mock navigation to test it
     const onNavigate = (pathname) => {
@@ -77,44 +83,15 @@ describe("Given I am connected as an employee", () => {
     const handleSubmit = jest.fn(login.handleSubmitEmployee)    
     form.addEventListener("submit", handleSubmit)
     fireEvent.submit(form)
-*/
-////////////////////////////////////////////////////////////////////
 
+    const html = BillsUI({ data: []})
+    document.body.innerHTML = html
 
-      //document.body.innerHTML = '<div id="root">page connection</div>'
-      //document.location = '/'
-      //await Router()
-      //new Login({ document, localStorage, onNavigate, PREVIOUS_LOCATION, firestore })
-
-      document.body.innerHTML = LoginUI()
-      const userMail = getByTestId(document, 'employee-email-input')
-      const userPasword = getByTestId(document, 'employee-password-input')
-      userMail.value = 'mail@mail.com'
-      userPasword.value = 'azerty'
-      const userSubmit = getByTestId(document, 'form-employee')
-      fireEvent.submit(userSubmit)
-      
-      //let test = 
-
-      Object.defineProperty(window, "localStorage", {
-        value: {
-          getItem: jest.fn(() => null),
-          setItem: jest.fn(() => user.type = "Employee")
-        },
-        writable: true
-      })
-
-
-      //expect(window.localStorage).toBe(2)
-
-      const html = BillsUI({ data: []})
-      document.body.innerHTML = html
-
-      //to-do write expect expression
-      //const iconeHightlighted = document.querySelector("#layout-icon1") // id = "layout-icon1" test id = "icon-window" la className doit être "active-icon"
-      expect(document.body).toBe(2)
+    //to-do write expect expression
+    //const iconeHightlighted = document.querySelector("#layout-icon1") // id = "layout-icon1" test id = "icon-window" la className doit être "active-icon"
+    expect(document.body).toBe(2)
     
-
+    ////////////////////////////////////////////////////////////////////
   })
 
 }) //retirer acolade
