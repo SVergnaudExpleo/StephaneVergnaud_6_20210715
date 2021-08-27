@@ -21,87 +21,29 @@ import ErrorPage from "../views/ErrorPage"
 import Bills, {default as BillsContainer} from "../containers/Bills"
 import {default as NewBillContainer} from "../containers/NewBill"
 import {default as LoadingPage} from "../views/LoadingPage"
-
 import {default as Router} from "../app/Router"
 import Login, { PREVIOUS_LOCATION } from "../containers/Login.js"
 import firestore from "../app/Firestore"
-import localStorage from '../__mocks__/localStorage'
 import LoginUI from "../views/LoginUI"
 import { ROUTES } from "../constants/routes"
+import { type } from "jquery"
+import {localStorageMock} from "../__mocks__/localStorage"
 
-beforeAll(()=>{
-  document.body.innerHTML = ''
-})
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
     it("Then bill icon in vertical layout should be highlighted", async () => {
-
-      /** 
-      document.body.innerHTML = LoginUI()
-      const userMail = getByTestId(document, 'employee-email-input')
-      const userPasword = getByTestId(document, 'employee-password-input')
-      userMail.value = 'mail@mail.com'
-      userPasword.value = 'azerty'
-      const userSubmit = getByTestId(document, 'form-employee')
-      fireEvent.submit(userSubmit)
-    */
-
-    ///////////////////////////////////////////////////////
-
-    document.body.innerHTML = LoginUI()
-    const inputData = {
-      email: "johndoe@email.com",
-      password: "azerty"
-    }
-    const inputEmailUser = screen.getByTestId("employee-email-input")
-    fireEvent.change(inputEmailUser, { target: { value: inputData.email } })
-    const inputPasswordUser = screen.getByTestId("employee-password-input")
-    fireEvent.change(inputPasswordUser, { target: { value: inputData.password } })
-    const form = screen.getByTestId("form-employee")
-    // localStorage should be populated with form data
-    Object.defineProperty(window, "localStorage", {
-      value: {
-        getItem: jest.fn(() => null),
-        setItem: jest.fn(() => null)
-      },
-      writable: true
-    })
-    // we have to mock navigation to test it
-    const onNavigate = (pathname) => {
-      document.body.innerHTML = ROUTES({ pathname })
-    }
-    let PREVIOUS_LOCATION = ''
-    const firebase = jest.fn()
-    const login = new Login({
-      document,
-      localStorage: window.localStorage,
-      onNavigate,
-      PREVIOUS_LOCATION,
-      firebase
-    })
-    const handleSubmit = jest.fn(login.handleSubmitEmployee)    
-    form.addEventListener("submit", handleSubmit)
-    fireEvent.submit(form)
-
+    Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+    window.localStorage.setItem('user', JSON.stringify({
+      type: 'Employee',
+    }))
     const html = BillsUI({ data: []})
     document.body.innerHTML = html
-
     //to-do write expect expression
-    //const iconeHightlighted = document.querySelector("#layout-icon1") // id = "layout-icon1" test id = "icon-window" la className doit être "active-icon"
-    expect(document.body).toBe(2)
-    
-    ////////////////////////////////////////////////////////////////////
+    const billIcon = screen.getByTestId("icon-window")
+    expect(billIcon.classList.contains("active-icon")).toBeTruthy
   })
 
-}) //retirer acolade
-
-
-
-
-
-
-/** 
     // on test que le tri decroissant est bien effectué
     // on compare les dates (normalement triées) avec les dates triées par le test
     it("Then bills should be ordered from earliest to latest", () => {
@@ -113,23 +55,21 @@ describe("Given I am connected as an employee", () => {
       expect(dates).toEqual(datesSorted) 
     })
 
-    test ("Then when on loading, loading page must be display", () => {
+    it ("Then when on loading, loading page must be display", () => {
       const html = BillsUI({data: bills,loading: 1})
       document.body.innerHTML = html
       const loadingTest = LoadingPage()
       expect(html).toContain(loadingTest)
     })
 
-    test ("Then when error, error page must bu display", () => {
+    it ("Then when error, error page must bu display", () => {
       const html = BillsUI({error: 1})
       document.body.innerHTML = html
       const loadingTest = ErrorPage(1)
       expect(html).toContain(loadingTest)
     })
 
-
-
-    test ("then user click on new bills, new bills must be display", () => {
+    it ("then user click on new bills, new bills must be display", () => {
       const html = BillsUI({data: bills})
       document.body.innerHTML = html
       new BillsContainer({document: document}, {onNavigate: 1}, {firestore: 1}, {localStorage: "mail@mail.com"})
@@ -142,23 +82,16 @@ describe("Given I am connected as an employee", () => {
       expect(1).toEqual(5)
     })
 
-
-
-
-
-
-
-
-    test ("then user click on eye icon, bills justification must be display", () => {
+    /** 
+    it ("then user click on eye icon, bills justification must be display", () => {
       const html = BillsUI({data: bills})
       document.body.innerHTML = html
       new BillsContainer({document: document},{onNavigate: 1}, {firestore: 1}, {localStorage: "mail@mail.com"})
       const iconEye = document.querySelector(`div[data-testid="icon-eye"]`)
       $(iconEye).click()
       expect(iconEye).toEqual(document.querySelector(`div[data-testid="icon-eye"]`))
-    })
+    })*/
   })
-  */
 })
 
 
