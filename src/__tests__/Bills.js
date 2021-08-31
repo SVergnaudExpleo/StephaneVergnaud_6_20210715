@@ -1,7 +1,7 @@
-// import des librairie de test
-import { screen } from "@testing-library/dom"
+// import testing library
+import { getAllByTestId, screen } from "@testing-library/dom"
 import '@testing-library/jest-dom'
-import userEvent from '@testing-library/user-event'
+import {userEvent} from '@testing-library/user-event'
 import {
   getByLabelText,
   getByText,
@@ -13,46 +13,52 @@ import {
   waitFor,
 } from '@testing-library/dom'
 
-// import des fonction du projet
+// import project function
 import {default as BillsUI} from "../views/BillsUI.js"
 import {default as NewBillUI } from "../views/NewBillUI"
 import { bills } from "../fixtures/bills.js"
+import Bills from "../containers/Bills"
+import LoadingPage from "../views/LoadingPage.js"
 import ErrorPage from "../views/ErrorPage"
-import Bills, {default as BillsContainer} from "../containers/Bills"
-import {default as NewBillContainer} from "../containers/NewBill"
-import {default as LoadingPage} from "../views/LoadingPage"
+import {localStorageMock} from "../__mocks__/localStorage"
+import { ROUTES } from "../constants/routes"
 import {default as Router} from "../app/Router"
+
 import Login, { PREVIOUS_LOCATION } from "../containers/Login.js"
 import firestore from "../app/Firestore"
 import LoginUI from "../views/LoginUI"
-import { ROUTES } from "../constants/routes"
 import { type } from "jquery"
-import {localStorageMock} from "../__mocks__/localStorage"
-
+import path from "path/posix"
+import VerticalLayout from './VerticalLayout.js'
+import { formatDate, formatStatus } from "../app/format.js"
+import Logout from "./Logout.js"
+import Actions from './Actions.js'
 
 describe("Given I am connected as an employee", () => {
-  describe("When I am on Bills Page", () => {
-    it("Then bill icon in vertical layout should be highlighted", async () => {
+  beforeAll(()=>{
     Object.defineProperty(window, 'localStorage', { value: localStorageMock })
     window.localStorage.setItem('user', JSON.stringify({
       type: 'Employee',
     }))
-    const html = BillsUI({ data: []})
-    document.body.innerHTML = html
-    //to-do write expect expression
-    const billIcon = screen.getByTestId("icon-window")
-    expect(billIcon.classList.contains("active-icon")).toBeTruthy
   })
 
-    // on test que le tri decroissant est bien effectué
-    // on compare les dates (normalement triées) avec les dates triées par le test
+  describe("When I am on Bills Page", () => {
+    it("Then bill icon in vertical layout should be highlighted", async () => {
+
+      const html = BillsUI({ data: []})
+      document.body.innerHTML = html
+      //to-do write expect expression
+      const billIcon = screen.getByTestId("icon-window")
+      expect(billIcon.classList.contains("active-icon")).toBeTruthy
+    })
+
     it("Then bills should be ordered from earliest to latest", () => {
       const html = BillsUI({ data: bills })
       document.body.innerHTML = html
       const dates = screen.getAllByText(/^(19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$/i).map(a => a.innerHTML) 
       const antiChrono = (a, b) => ((a.dateBrut < b.dateBrut) ? 1 : -1)
       const datesSorted = dates.sort(antiChrono)
-      expect(dates).toEqual(datesSorted) 
+      expect(dates).toEqual(datesSorted) // on compare les dates (normalement triées) avec les dates triées par le test
     })
 
     it ("Then when on loading, loading page must be display", () => {
@@ -70,27 +76,48 @@ describe("Given I am connected as an employee", () => {
     })
 
     it ("then user click on new bills, new bills must be display", () => {
+      // Set page to bill employee dasboard
       const html = BillsUI({data: bills})
       document.body.innerHTML = html
-      new BillsContainer({document: document}, {onNavigate: 1}, {firestore: 1}, {localStorage: "mail@mail.com"})
-      const buttonNewBill = document.querySelector(`button[data-testid="btn-new-bill"]`)
-      $(buttonNewBill).click()
+      // create root element to activate Router
+      let NewDivBillsUI = document.createElement('div')
+      NewDivBillsUI.innerHTML = "<div id='root'></div>"
+      document.body.appendChild(NewDivBillsUI)
+      Router()
+      // redirect to newbill and create newbill page
+      let noteDeFrais = new Bills({ document: document, onNavigate: ROUTES, firestore:1, localStorage: window.localStorage })
+      const buttonNewBill = getByTestId(document.body,"btn-new-bill")
+      buttonNewBill.click()
       const htmlNewBills = NewBillUI()
       document.body.innerHTML = htmlNewBills
-      new NewBillContainer ({document: document}, {onNavigate: 1}, {firestore: 1}, {localStorage: "mail@mail.com"})
+      // Create root element to activate router
+      let NewDivNewBill = document.createElement('div')
+      NewDivNewBill.innerHTML = "<div id='root'></div>"
+      document.body.appendChild(NewDivNewBill)
+      Router()
       
-      expect(1).toEqual(5)
+      expect(document.body.innerHTML).toContain("Envoyer une note de frais")
     })
 
-    /** 
+    
     it ("then user click on eye icon, bills justification must be display", () => {
-      const html = BillsUI({data: bills})
+      // Set page to bill employee dasboard
+      const html = BillsUI({data: bills, loading: 0, error: 0})
       document.body.innerHTML = html
-      new BillsContainer({document: document},{onNavigate: 1}, {firestore: 1}, {localStorage: "mail@mail.com"})
-      const iconEye = document.querySelector(`div[data-testid="icon-eye"]`)
-      $(iconEye).click()
-      expect(iconEye).toEqual(document.querySelector(`div[data-testid="icon-eye"]`))
-    })*/
+      // create root element to activate Router
+      let NewDivBillsUI = document.createElement('div')
+      NewDivBillsUI.innerHTML = "<div id='root'></div>"
+      document.body.appendChild(NewDivBillsUI)
+      Router()
+
+      // redirect to justificate and create justificate page
+      let noteDeFrais = new Bills({ document: document, onNavigate: ROUTES, firestore:1, localStorage: window.localStorage })
+      const iconEye = getAllByTestId(document.body, 'icon-eye')
+      iconEye[1].click()
+
+      expect(document).toEqual(1)
+      
+    })
   })
 })
 
