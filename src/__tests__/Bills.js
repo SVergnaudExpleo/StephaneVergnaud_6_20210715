@@ -1,6 +1,4 @@
 // import testing library
-import { getAllByTestId, screen } from "@testing-library/dom"
-import '@testing-library/jest-dom'
 import {userEvent} from '@testing-library/user-event'
 import {
   getByLabelText,
@@ -8,6 +6,7 @@ import {
   getByTestId,
   queryByTestId,
   fireEvent,
+  screen,
   // Tip: all queries are also exposed on an object
   // called "queries" which you could import here as well
   waitFor,
@@ -29,10 +28,11 @@ import firestore from "../app/Firestore"
 import LoginUI from "../views/LoginUI"
 import { type } from "jquery"
 import path from "path/posix"
-import VerticalLayout from './VerticalLayout.js'
+import VerticalLayout from '../views/VerticalLayout'
 import { formatDate, formatStatus } from "../app/format.js"
 import Logout from "./Logout.js"
 import Actions from './Actions.js'
+import firebase from "../__mocks__/firebase.js"
 
 describe("Given I am connected as an employee", () => {
   beforeAll(()=>{
@@ -44,12 +44,33 @@ describe("Given I am connected as an employee", () => {
 
   describe("When I am on Bills Page", () => {
     it("Then bill icon in vertical layout should be highlighted", async () => {
+      // Set page to bill employee dasboard
+      document.body.innerHTML = BillsUI({data: bills})
+      delete window.location
+      window.location = { pathname: '#employee/bills' }
+      
+      //expect(window.location.href).toBe('#employee/bills')
+    
+
+      expect(window.location.pathname).toBe('#employee/bills')
+
+      // create root element to activate Router
+      let NewDivBillsUI = document.createElement('div')
+      NewDivBillsUI.innerHTML = "<div id='root'></div>"
+      document.body.appendChild(NewDivBillsUI)
+      let events = {};
+		  window.onNavigate = jest.fn((event, callback) => {
+      		events[event] = callback;
+    	})
+      Router()
+      
+      expect(document.getElementById("layout-icon1")).toContain("24")   
 
       const html = BillsUI({ data: []})
       document.body.innerHTML = html
-      //to-do write expect expression
+      expect(screen.getByTestId("icon-window")).toBeTruthy()
       const billIcon = screen.getByTestId("icon-window")
-      expect(billIcon.classList.contains("active-icon")).toBeTruthy
+      expect(billIcon.classList.contains("active-icon")).toBeTruthy()
     })
 
     it("Then bills should be ordered from earliest to latest", () => {
@@ -101,22 +122,23 @@ describe("Given I am connected as an employee", () => {
 
     
     it ("then user click on eye icon, bills justification must be display", () => {
-      // Set page to bill employee dasboard
-      const html = BillsUI({data: bills, loading: 0, error: 0})
+
+      const html = BillsUI({data: bills})
       document.body.innerHTML = html
-      // create root element to activate Router
-      let NewDivBillsUI = document.createElement('div')
-      NewDivBillsUI.innerHTML = "<div id='root'></div>"
-      document.body.appendChild(NewDivBillsUI)
-      Router()
-
-      // redirect to justificate and create justificate page
-      let noteDeFrais = new Bills({ document: document, onNavigate: ROUTES, firestore:1, localStorage: window.localStorage })
-      const iconEye = getAllByTestId(document.body, 'icon-eye')
-      iconEye[1].click()
-
-      expect(document).toEqual(1)
-      
+      const newBill = new Bills({
+        document,
+        onNavigate,
+        firestore: null,
+        localStorage: window.localStorage
+      });
+      $.fn.modal = jest.fn()
+      const iconEye = screen.queryAllByTestId("icon-eye")
+      const handleClickIconEye = jest.fn(event => newBill.handleClickIconEye)
+      iconEye[0].addEventListener("click", handleClickIconEye)
+      fireEvent.click(iconEye[0])
+      expect(handleClickIconEye).toHaveBeenCalled()
+      const modal = document.getElementById("modaleFile")
+      expect(modal).toBeTruthy()
     })
   })
 })
