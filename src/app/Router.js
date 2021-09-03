@@ -58,6 +58,7 @@ export default () => {
         rootDiv.innerHTML = ROUTES({ pathname, error })
       })
     }
+    console.log(window.onNavigate(pathname))
   }
   
   window.onpopstate = (e) => {
