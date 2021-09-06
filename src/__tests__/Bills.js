@@ -53,12 +53,19 @@ describe("Given I am connected as an employee", () => {
       NewDivBillsUI.innerHTML = "<div id='root'></div>"
       document.body.appendChild(NewDivBillsUI)
       
-      
-      Firestore.store.collection = jest.fn()
-      jest.mock('../app/Firestore')     
-      
 
-      await Router()
+      Firestore.store.collection = jest.fn()
+      Bills.getBills = jest.fn()
+
+
+/*       jest.mock("../containers/Bills")     
+      let testBills = new Bills({document,onNavigate:1,firestore:Firestore,localStorage})
+      
+      testBills.getBills.firestore.mockReturnValue({
+        get: jest.fn().mockResolvedValue({ something: jest.fn() }),
+      }) */
+
+      Router()
 
 /*       const testNavigate = jest.fn((pathname = '#employee/bills') => window.onNavigate(pathname))
       testNavigate() */      
@@ -71,6 +78,9 @@ describe("Given I am connected as an employee", () => {
       const billIcon = screen.getByTestId("icon-window")
       expect(billIcon.classList.contains("active-icon")).toBeTruthy() */
     })
+
+
+
 /* 
     it("Then bills should be ordered from earliest to latest", () => {
       const html = BillsUI({ data: bills })
