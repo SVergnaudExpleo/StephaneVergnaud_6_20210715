@@ -1,14 +1,17 @@
-import { ROUTES_PATH } from '../constants/routes.js'
+import { ROUTES, ROUTES_PATH } from '../constants/routes.js'
 import { formatDate, formatStatus } from "../app/format.js"
 import Logout from "./Logout.js"
 
+function handleClickNewBill() {
+    ROUTES(ROUTES_PATH['NewBill'])
+  }//this.onNavigate(ROUTES_PATH['NewBill'])
 export default class {
   constructor({ document, onNavigate, firestore, localStorage }) {
     this.document = document
     this.onNavigate = onNavigate
     this.firestore = firestore
     const buttonNewBill = document.querySelector(`button[data-testid="btn-new-bill"]`)
-    if (buttonNewBill) buttonNewBill.addEventListener('click', this.handleClickNewBill)
+    if (buttonNewBill) buttonNewBill.addEventListener('click', handleClickNewBill())
     const iconEye = document.querySelectorAll(`div[data-testid="icon-eye"]`)
     if (iconEye) iconEye.forEach(icon => {
       icon.addEventListener('click', (e) => this.handleClickIconEye(icon))
@@ -16,9 +19,7 @@ export default class {
     new Logout({ document, localStorage, onNavigate })
   }
 
-  handleClickNewBill = e => {
-    this.onNavigate(ROUTES_PATH['NewBill'])//.bind(this)
-  }//this.onNavigate(ROUTES_PATH['NewBill'])
+  
 
   // Action au clic sur le bouton oeuil
   handleClickIconEye = (icon) => {
@@ -27,6 +28,10 @@ export default class {
     $('#modaleFile').find(".modal-body").html(`<div style='text-align: center;'><img width=100% src=${billUrl} /></div>`)
     $('#modaleFile').modal('show')
   }
+
+  handleClickNewBill = () => {
+    this.onNavigate(ROUTES_PATH['NewBill']).bind(this)
+  }//this.onNavigate(ROUTES_PATH['NewBill'])
 
   // not need to cover this function by tests
   getBills = () => {

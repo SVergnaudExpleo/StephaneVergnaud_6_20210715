@@ -53,15 +53,15 @@ describe("Given I am connected as an employee", () => {
         type: 'Employee',
       }))
       document.body.innerHTML = BillsUI({data:[]})
-      expect(screen.getByTestId("icon-window")).toBeTruthy()
-
       const billIcon = screen.getByTestId("icon-window")
+      expect(billIcon).toBeTruthy()
+
       const divIcon1 = document.getElementById('layout-icon1')
       divIcon1.classList.add('active-icon')
+
       expect(billIcon.classList.length).toBe(1)
       expect(billIcon.classList.contains("active-icon")).toBeTruthy()
       
-      //
       //const html = BillsUI({ data: []})
       //document.body.innerHTML = html
     })
@@ -78,15 +78,13 @@ describe("Given I am connected as an employee", () => {
     it ("Then when on loading, loading page must be display", () => {
       const html = BillsUI({data: bills,loading: 1})
       document.body.innerHTML = html
-      const loadingTest = LoadingPage()
-      expect(html).toContain(loadingTest)
+      expect(document.getElementById('loading')).toBeDefined() // Rechercher l'exisance d'un id determinant
     })
 
     it ("Then when error, error page must bu display", () => {
       const html = BillsUI({error: 1})
       document.body.innerHTML = html
-      const loadingTest = ErrorPage(1)
-      expect(html).toContain(loadingTest)
+      expect(getByTestId(document,"error-message")).toBeDefined()// Rechercher l'exisance d'un id determinant
     })
 
     it ("then user click on new bills, new bills must be display", () => {
@@ -94,15 +92,20 @@ describe("Given I am connected as an employee", () => {
       document.body.innerHTML = html
       const buttonNewBill = getByTestId(document.body,"btn-new-bill")
       expect(buttonNewBill).toBeTruthy()
+
+      //const onNavigate = ROUTES
+      //onNavigate(ROUTES) = jest.fn()
+      
+      new Bills({ document, onNavigate:ROUTES({pathname:'#employee/bill/new', data:[]}), firestore:null, localStorage  })
+      window.location.hash = '#employee/bill/new'
       fireEvent.click(buttonNewBill)
-      const htmlNewBills = NewBillUI()
-      document.body.innerHTML = htmlNewBills
-      expect(document.body.innerHTML).toContain("Envoyer une note de frais")
+      //const htmlNewBills = NewBillUI()
+      //document.body.innerHTML = htmlNewBills
+      expect(getByTestId(document,"form-new-bill").toBeDefined())
     })
 
     
     it ("then user click on eye icon, bills justification must be display", () => {
-
       const html = BillsUI({data: bills})
       document.body.innerHTML = html
       const newBill = new Bills({
@@ -124,22 +127,32 @@ describe("Given I am connected as an employee", () => {
 })
 
 
-/** 
-import firebase from "../__mocks__/firebase"
-import mail from "../assets/svg/mail.js"
-import { async } from 'rsvp'
-
 // test d'intégration GET
-describe("Given I am a user connected as employee", () => {
-  describe("When I navigate to employee Dashboard", () => {
+describe("Given I am a user connected as Employee", () => {
+  describe("When I navigate to BillsUI", () => {
     test("fetches bills from mock API GET", async () => {
-      const html = BillsUI({data: bills})
+       const getSpy = jest.spyOn(firebase, "get")
+       const bills = await firebase.get()
+       expect(getSpy).toHaveBeenCalledTimes(1)
+       expect(bills.data.length).toBe(4)
+    })
+    test("fetches bills from an API and fails with 404 message error", async () => {
+      firebase.get.mockImplementationOnce(() =>
+        Promise.reject(new Error("Erreur 404"))
+      )
+      const html = BillsUI({ error: "Erreur 404" })
       document.body.innerHTML = html
-      const getSpy = jest.spyOn(new Bills({document: document}, {localStorage: "mail@mail.com"}), "get")
-      const billsTest = await bills.get()
-      expect(getSpy).toHaveBeenCalledTimes(1)
-      expect(billsTest.data.length).toBe(4)
+      const message = await screen.getByText(/Erreur 404/)
+      expect(message).toBeTruthy()
+    })
+    test("fetches messages from an API and fails with 500 message error", async () => {
+      firebase.get.mockImplementationOnce(() =>
+        Promise.reject(new Error("Erreur 500"))
+      )
+      const html = BillsUI({ error: "Erreur 500" })
+      document.body.innerHTML = html
+      const message = await screen.getByText(/Erreur 500/)
+      expect(message).toBeTruthy()
     })
   })
 })
-*/
