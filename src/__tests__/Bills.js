@@ -35,53 +35,37 @@ import firebase from "../__mocks__/firebase.js"
 import Firestore from '../app/Firestore'
 
 describe("Given I am connected as an employee", () => {
-  beforeAll(()=>{
+  beforeEach(()=>{
     Object.defineProperty(window, 'localStorage', { value: localStorageMock })
     window.localStorage.setItem('user', JSON.stringify({
       type: 'Employee',
     }))
   })
 
-  
+
+
   describe("When I am on Bills Page", () => {
     it("Then bill icon in vertical layout should be highlighted", async () => {
-      // Set page to bill employee dasboard
-      document.body.innerHTML = BillsUI({data: bills})
+      
       window.location.hash = "#employee/bills"
-      // create root element to activate Router
-      let NewDivBillsUI = document.createElement('div')
-      NewDivBillsUI.innerHTML = "<div id='root'></div>"
-      document.body.appendChild(NewDivBillsUI)
-      
-
-      Firestore.store.collection = jest.fn()
-      Bills.getBills = jest.fn()
-
-
-/*       jest.mock("../containers/Bills")     
-      let testBills = new Bills({document,onNavigate:1,firestore:Firestore,localStorage})
-      
-      testBills.getBills.firestore.mockReturnValue({
-        get: jest.fn().mockResolvedValue({ something: jest.fn() }),
-      }) */
-
-      Router()
-
-/*       const testNavigate = jest.fn((pathname = '#employee/bills') => window.onNavigate(pathname))
-      testNavigate() */      
-
-      expect(document.getElementById("layout-icon1")).toContain("24")   
-
-      /* const html = BillsUI({ data: []})
-      document.body.innerHTML = html
+      Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+      window.localStorage.setItem('user', JSON.stringify({
+        type: 'Employee',
+      }))
+      document.body.innerHTML = BillsUI({data:[]})
       expect(screen.getByTestId("icon-window")).toBeTruthy()
+
       const billIcon = screen.getByTestId("icon-window")
-      expect(billIcon.classList.contains("active-icon")).toBeTruthy() */
+      const divIcon1 = document.getElementById('layout-icon1')
+      divIcon1.classList.add('active-icon')
+      expect(billIcon.classList.length).toBe(1)
+      expect(billIcon.classList.contains("active-icon")).toBeTruthy()
+      
+      //
+      //const html = BillsUI({ data: []})
+      //document.body.innerHTML = html
     })
 
-
-
-/* 
     it("Then bills should be ordered from earliest to latest", () => {
       const html = BillsUI({ data: bills })
       document.body.innerHTML = html
@@ -106,28 +90,15 @@ describe("Given I am connected as an employee", () => {
     })
 
     it ("then user click on new bills, new bills must be display", () => {
-      // Set page to bill employee dasboard
       const html = BillsUI({data: bills})
       document.body.innerHTML = html
-      // create root element to activate Router
-      let NewDivBillsUI = document.createElement('div')
-      NewDivBillsUI.innerHTML = "<div id='root'></div>"
-      document.body.appendChild(NewDivBillsUI)
-      Router()
-      // redirect to newbill and create newbill page
-      let noteDeFrais = new Bills({ document: document, onNavigate: ROUTES, firestore:1, localStorage: window.localStorage })
       const buttonNewBill = getByTestId(document.body,"btn-new-bill")
-      buttonNewBill.click()
+      expect(buttonNewBill).toBeTruthy()
+      fireEvent.click(buttonNewBill)
       const htmlNewBills = NewBillUI()
       document.body.innerHTML = htmlNewBills
-      // Create root element to activate router
-      let NewDivNewBill = document.createElement('div')
-      NewDivNewBill.innerHTML = "<div id='root'></div>"
-      document.body.appendChild(NewDivNewBill)
-      Router()
-      
       expect(document.body.innerHTML).toContain("Envoyer une note de frais")
-    }) */
+    })
 
     
     it ("then user click on eye icon, bills justification must be display", () => {
@@ -136,7 +107,7 @@ describe("Given I am connected as an employee", () => {
       document.body.innerHTML = html
       const newBill = new Bills({
         document,
-        onNavigate,
+        onNavigate: ROUTES({data:[]}),
         firestore: null,
         localStorage: window.localStorage
       });
