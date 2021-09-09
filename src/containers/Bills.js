@@ -17,7 +17,7 @@ export default class {
   }
 
   handleClickNewBill = e => {
-    this.onNavigate(ROUTES_PATH['NewBill'])//.bind(this)
+    this.onNavigate(ROUTES_PATH['NewBill']).bind(this)
   }//this.onNavigate(ROUTES_PATH['NewBill'])
 
   // Action au clic sur le bouton oeuil
