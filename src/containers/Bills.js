@@ -2,9 +2,6 @@ import { ROUTES, ROUTES_PATH } from '../constants/routes.js'
 import { formatDate, formatStatus } from "../app/format.js"
 import Logout from "./Logout.js"
 
-/* function handleClickNewBill() {
-    ROUTES(ROUTES_PATH['NewBill'])
-  }//this.onNavigate(ROUTES_PATH['NewBill']) */
 export default class {
   constructor({ document, onNavigate, firestore, localStorage }) {
     this.document = document
@@ -19,7 +16,9 @@ export default class {
     new Logout({ document, localStorage, onNavigate })
   }
 
-  
+  handleClickNewBill = e => {
+    this.onNavigate(ROUTES_PATH['NewBill'])//.bind(this)
+  }//this.onNavigate(ROUTES_PATH['NewBill'])
 
   // Action au clic sur le bouton oeuil
   handleClickIconEye = (icon) => {
@@ -29,9 +28,6 @@ export default class {
     $('#modaleFile').modal('show')
   }
 
-  handleClickNewBill = () => {
-    this.onNavigate(ROUTES_PATH['NewBill']).bind(this)
-  }//this.onNavigate(ROUTES_PATH['NewBill'])
 
   // not need to cover this function by tests
   getBills = () => {
