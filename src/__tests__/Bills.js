@@ -1,5 +1,9 @@
+/**
+ * @jest-environment jsdom
+ */
+
 // import testing library
-import {userEvent} from '@testing-library/user-event'
+import userEvent from '@testing-library/user-event'
 import {
   getByLabelText,
   getByText,
@@ -7,8 +11,6 @@ import {
   queryByTestId,
   fireEvent,
   screen,
-  // Tip: all queries are also exposed on an object
-  // called "queries" which you could import here as well
   waitFor,
 } from '@testing-library/dom'
 
@@ -22,7 +24,6 @@ import ErrorPage from "../views/ErrorPage"
 import {localStorageMock} from "../__mocks__/localStorage"
 import { ROUTES } from "../constants/routes"
 import {default as Router} from "../app/Router"
-
 import Login, { PREVIOUS_LOCATION } from "../containers/Login.js"
 import LoginUI from "../views/LoginUI"
 import { type } from "jquery"
@@ -47,17 +48,17 @@ describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
     it("Then bill icon in vertical layout should be highlighted", async () => {
       
-      window.location.hash = "#employee/bills"
+      //window.location.hash = "#employee/bills"
       Object.defineProperty(window, 'localStorage', { value: localStorageMock })
       window.localStorage.setItem('user', JSON.stringify({
         type: 'Employee',
       }))
-      document.body.innerHTML = BillsUI({data:[]})
+      document.body.innerHTML = BillsUI({data:[],Login:true})
       const billIcon = screen.getByTestId("icon-window")
       expect(billIcon).toBeTruthy()
 
       const divIcon1 = document.getElementById('layout-icon1')
-      divIcon1.classList.add('active-icon')
+      //divIcon1.classList.add('active-icon')
 
       expect(billIcon.classList.length).toBe(1)
       expect(billIcon.classList.contains("active-icon")).toBeTruthy()
@@ -96,9 +97,11 @@ describe("Given I am connected as an employee", () => {
       //const onNavigate = ROUTES
       //onNavigate(ROUTES) = jest.fn()
       
-      new Bills({ document, onNavigate:ROUTES({pathname:'#employee/bill/new', data:[]}), firestore:null, localStorage  })
-      window.location.hash = '#employee/bill/new'
+      const testBills = new Bills({ document, onNavigate:ROUTES({ data:[]}), firestore:null, localStorage  })
+      //window.location.hash = '#employee/bill/new'
       fireEvent.click(buttonNewBill)
+      //userEvent.click(buttonNewBill)
+      
       //const htmlNewBills = NewBillUI()
       //document.body.innerHTML = htmlNewBills
       expect(getByTestId(document,"form-new-bill").toBeDefined())

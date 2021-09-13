@@ -18,28 +18,29 @@ export default class NewBill {
 
   // Validation du type de fichier justificatif
   handleChangeFile = e => {
-    const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
+    //const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
+    const file = document.querySelector("#file").files[0]
+    const fileNameTest = file.name
+
     const filePath = e.target.value.split(/\\/g)
     const fileName = filePath[filePath.length-1]
-
     const tableAutorizedFile = [".jpeg", ".jpg", ".png"]
     var compteur = 0
-
     tableAutorizedFile.forEach(function (fileType) {
       var fileTypeRegex = new RegExp(fileType, 'i')
-      if (fileName.search(fileTypeRegex) <= -1) {
+      if (fileNameTest.search(fileTypeRegex) <= -1) {
         compteur++
       }
     });
     if (compteur == tableAutorizedFile.length) {
-      var test = document.querySelector(`input[data-testid="file"]`)
-      test.value = ""
-      alert("le type de fichier doit être ,.jpeg, .jpg, .png.\r\ Vous avez utilisé le fichier ci-dessous \r\ \r\ " + fileName)
+      var fileArea = document.querySelector(`input[data-testid="file"]`)
+      fileArea.value = ""
+      alert("le type de fichier doit être ,.jpeg, .jpg, .png.\r\ Vous avez utilisé le fichier ci-dessous \r\ \r\ " + fileNameTest)
     } else {
       this.firestore
       .storage
       .ref(`justificatifs/${fileName}`)
-      .put(file)
+      .put(file) //The app.put() function routes the HTTP PUT requests to the specified path with the specified callback functions
       .then(snapshot => snapshot.ref.getDownloadURL())
       .then(url => {
         this.fileUrl = url
