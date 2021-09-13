@@ -26,12 +26,8 @@ import { ROUTES } from "../constants/routes"
 import {default as Router} from "../app/Router"
 import Login, { PREVIOUS_LOCATION } from "../containers/Login.js"
 import LoginUI from "../views/LoginUI"
-import { type } from "jquery"
-import path from "path/posix"
 import VerticalLayout from '../views/VerticalLayout'
 import { formatDate, formatStatus } from "../app/format.js"
-import Logout from "./Logout.js"
-import Actions from './Actions.js'
 import firebase from "../__mocks__/firebase.js"
 import Firestore from '../app/Firestore'
 
@@ -40,6 +36,9 @@ describe("Given I am connected as an employee", () => {
     Object.defineProperty(window, 'localStorage', { value: localStorageMock })
     window.localStorage.setItem('user', JSON.stringify({
       type: 'Employee',
+      email:'mail@mail.com',
+      password:'azerty',
+      status:'connected'
     }))
   })
 
@@ -47,24 +46,20 @@ describe("Given I am connected as an employee", () => {
 
   describe("When I am on Bills Page", () => {
     it("Then bill icon in vertical layout should be highlighted", async () => {
-      
-      //window.location.hash = "#employee/bills"
+
       Object.defineProperty(window, 'localStorage', { value: localStorageMock })
       window.localStorage.setItem('user', JSON.stringify({
         type: 'Employee',
+        email:'mail@mail.com',
+        password:'azerty',
+        status:'connected'
       }))
-      document.body.innerHTML = BillsUI({data:[],Login:true})
+      document.body.innerHTML = BillsUI({data:firebase,loading:true})
       const billIcon = screen.getByTestId("icon-window")
       expect(billIcon).toBeTruthy()
 
-      const divIcon1 = document.getElementById('layout-icon1')
-      //divIcon1.classList.add('active-icon')
-
       expect(billIcon.classList.length).toBe(1)
       expect(billIcon.classList.contains("active-icon")).toBeTruthy()
-      
-      //const html = BillsUI({ data: []})
-      //document.body.innerHTML = html
     })
 
     it("Then bills should be ordered from earliest to latest", () => {
@@ -92,15 +87,14 @@ describe("Given I am connected as an employee", () => {
       const html = BillsUI({data: bills})
       document.body.innerHTML = html
       const buttonNewBill = getByTestId(document.body,"btn-new-bill")
-      expect(buttonNewBill).toBeTruthy()
+      expect(buttonNewBill).toBeTruthy()   
+      Bills.onNavigate = jest.fn()  
+      const testBills = new Bills({ document, onNavigate: ROUTES({ data:[]}), firestore:null, localStorage  })
+      const handleClickNewBill = jest.fn(event => Bills.handleClickNewBill)
+      buttonNewBill.addEventListener('click',handleClickNewBill)
 
-      //const onNavigate = ROUTES
-      //onNavigate(ROUTES) = jest.fn()
-      
-      const testBills = new Bills({ document, onNavigate:ROUTES({ data:[]}), firestore:null, localStorage  })
-      //window.location.hash = '#employee/bill/new'
       fireEvent.click(buttonNewBill)
-      //userEvent.click(buttonNewBill)
+      expect(handleClickNewBill).toHaveBeenCalled()
       
       //const htmlNewBills = NewBillUI()
       //document.body.innerHTML = htmlNewBills

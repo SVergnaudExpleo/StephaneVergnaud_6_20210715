@@ -29,6 +29,7 @@ import firebase from '../__mocks__/firebase'
 import firebasePost from "../__mocks__/firebasePost"
 
 
+
 describe("Given I am connected as an employee", () => {
   beforeEach(()=>{
     Object.defineProperty(window, 'localStorage', { value: localStorageMock })
@@ -58,7 +59,7 @@ describe("Given I am connected as an employee", () => {
     it("Then user select a valid justification file, alert must NOT be display ", () => {
       const html = NewBillUI()
       document.body.innerHTML = html
-      new NewBill({document: document, onNavigate: ROUTES, firestore, localstorage: window.localStorage})
+      new NewBill({document: document, onNavigate:null, firestore, localstorage: window.localStorage})
       let fichier = getByTestId(document,"file")
       //importer un fichier valide //
       window.alert = jest.fn()
@@ -66,7 +67,7 @@ describe("Given I am connected as an employee", () => {
       
       //firestore.store.collection = jest.fn()
       //firestore.storage = jest.fn()
-      NewBill.firestore.put = 'test'
+      //NewBill.firestore.put = 'test'
 
 
       fireEvent.change(fichier, {
