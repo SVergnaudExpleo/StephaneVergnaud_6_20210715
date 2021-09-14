@@ -45,8 +45,8 @@ describe("Given I am connected as an employee", () => {
 
 
   describe("When I am on Bills Page", () => {
-    it("Then bill icon in vertical layout should be highlighted", async () => {
-
+    it.only("Then bill icon in vertical layout should be highlighted", async () => {
+      
       Object.defineProperty(window, 'localStorage', { value: localStorageMock })
       window.localStorage.setItem('user', JSON.stringify({
         type: 'Employee',
@@ -88,12 +88,13 @@ describe("Given I am connected as an employee", () => {
       document.body.innerHTML = html
       const buttonNewBill = getByTestId(document.body,"btn-new-bill")
       expect(buttonNewBill).toBeTruthy()   
-      Bills.onNavigate = jest.fn()  
-      const testBills = new Bills({ document, onNavigate: ROUTES({ data:[]}), firestore:null, localStorage  })
+       
+      new Bills({ document, onNavigate: ROUTES({ data:[]}), firestore:null, localStorage  })
       const handleClickNewBill = jest.fn(event => Bills.handleClickNewBill)
       buttonNewBill.addEventListener('click',handleClickNewBill)
 
       fireEvent.click(buttonNewBill)
+     
       expect(handleClickNewBill).toHaveBeenCalled()
       
       //const htmlNewBills = NewBillUI()

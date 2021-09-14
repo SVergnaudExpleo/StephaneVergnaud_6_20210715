@@ -27,6 +27,7 @@ import Logout from "./Logout.js"
 import Actions from './Actions.js'
 import firebase from '../__mocks__/firebase'
 import firebasePost from "../__mocks__/firebasePost"
+import Firestore from "../app/Firestore"
 
 
 
@@ -61,14 +62,14 @@ describe("Given I am connected as an employee", () => {
       document.body.innerHTML = html
       new NewBill({document: document, onNavigate:null, firestore, localstorage: window.localStorage})
       let fichier = getByTestId(document,"file")
-      //importer un fichier valide //
       window.alert = jest.fn()
+      let handleChangeFile = jest.fn(NewBill.handleChangeFile)
+      fichier.addEventListener("change",handleChangeFile)
       firestore.storage.ref = jest.fn()
-      
-      //firestore.store.collection = jest.fn()
-      //firestore.storage = jest.fn()
-      //NewBill.firestore.put = 'test'
+      NewBill.ref = jest.fn()
+      //jest.mock("../app/Firestore")
 
+      //Firestore.storage.ref.mockResolvedValue()
 
       fireEvent.change(fichier, {
         target: {
