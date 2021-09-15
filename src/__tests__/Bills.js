@@ -45,7 +45,7 @@ describe("Given I am connected as an employee", () => {
 
 
   describe("When I am on Bills Page", () => {
-    it.only("Then bill icon in vertical layout should be highlighted", async () => {
+    it("Then bill icon in vertical layout should be highlighted", async () => {
       
       Object.defineProperty(window, 'localStorage', { value: localStorageMock })
       window.localStorage.setItem('user', JSON.stringify({
@@ -57,7 +57,9 @@ describe("Given I am connected as an employee", () => {
       document.body.innerHTML = BillsUI({data:firebase,loading:true})
       const billIcon = screen.getByTestId("icon-window")
       expect(billIcon).toBeTruthy()
-
+      const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({ pathname })
+      }
       expect(billIcon.classList.length).toBe(1)
       expect(billIcon.classList.contains("active-icon")).toBeTruthy()
     })
