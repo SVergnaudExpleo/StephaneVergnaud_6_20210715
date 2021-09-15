@@ -2,6 +2,20 @@
   "scripts": {
     "test": "jest"
   },
+  "jest": {
+    "verbose": true,
+    "setupFiles": [
+      "./setup-jest.js"
+    ],
+    "collectCoverageFrom": [
+      "**/*.{js,jsx}",
+      "!**/app/**",
+      "!**/assets/**",
+      "!**/external/**",
+      "!**/fixtures/**",
+      "!**/lcov-report/**"
+    ]
+  },
   "type": "module",
   "dependencies": {
     "express": "^4.17.1",
