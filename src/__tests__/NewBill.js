@@ -3,7 +3,6 @@
  */
 
 // import testing library
-import { getAllByTestId, screen } from "@testing-library/dom"
 import {userEvent} from '@testing-library/user-event'
 import {
   getByLabelText,
@@ -12,6 +11,8 @@ import {
   queryByTestId,
   fireEvent,
   waitFor,
+  screen,
+  getAllByTestId
 } from '@testing-library/dom'
 
 // import project function
@@ -19,15 +20,9 @@ import {default as NewBillUI } from "../views/NewBillUI"
 import {localStorageMock} from "../__mocks__/localStorage"
 import NewBill from "../containers/NewBill.js"
 import { ROUTES } from "../constants/routes"
-import firestore from "../app/Firestore"
-import path from "path/posix"
-import VerticalLayout from './VerticalLayout.js'
-import { formatDate, formatStatus } from "../app/format.js"
-import Logout from "./Logout.js"
-import Actions from './Actions.js'
 import firebase from '../__mocks__/firebase'
 import firebasePost from "../__mocks__/firebasePost"
-import Firestore from "../app/Firestore"
+//import Firestore from "../app/Firestore"
 
 
 
@@ -43,56 +38,74 @@ describe("Given I am connected as an employee", () => {
     it("Then user select an invalid justification file, alert must be display ", () => {
       const html = NewBillUI()
       document.body.innerHTML = html
-      new NewBill({document, onNavigate: ROUTES, firestore, localstorage: window.localStorage})
-      let fichier = getByTestId(document,"file")
-      /* fichier.file = ''
-      fireEvent.change(fichier) */
-      window.alert = jest.fn()
 
+      const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({ pathname })
+      }
+      const newBillTest = new NewBill({document, onNavigate, firestore:null, localstorage: window.localStorage})
+
+      window.alert = jest.fn()
+      const fichier = getByTestId(document,"file")
       fireEvent.change(fichier, {
         target: {
-          files: [new File(['(⌐□_□)'],'mauvais-type.txt',{type: 'text/plain', name: 'mauvais-type.txt'})],
+          files: [new File(['file content'],'mauvais-type.txt',{type: 'text/plain', name: 'mauvais-type.txt'})],
         }
       })
+      
       expect(window.alert).toBeCalled()
     })
 
-    it("Then user select a valid justification file, alert must NOT be display ", () => {
+    it.only("Then user select a valid justification file, alert must NOT be display ", () => {
       const html = NewBillUI()
       document.body.innerHTML = html
-      new NewBill({document: document, onNavigate:null, firestore, localstorage: window.localStorage})
-      let fichier = getByTestId(document,"file")
       window.alert = jest.fn()
-      let handleChangeFile = jest.fn(NewBill.handleChangeFile)
-      fichier.addEventListener("change",handleChangeFile)
-      firestore.storage.ref = jest.fn()
-      NewBill.ref = jest.fn()
-      //jest.mock("../app/Firestore")
+      const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({ pathname })
+      }
 
-      //Firestore.storage.ref.mockResolvedValue()
+      Object.defineProperty(window, 'firebase', { value: localStorageMock })
+      window.firebase.storage('storage', JSON.stringify({
+        value: 'toto',
+      }))
+
+      class Firestore {
+        constructor() {
+          this.store = window.firebase ? window.firebase.firestore() : () => null
+          this.storage = window.firebase ? window.firebase.storage() : () => null
+        }
+        //ref = (path) => this.store.doc(path)
+      }
+
+      const newBillTest = new NewBill({document, onNavigate, Firestore, localstorage: window.localStorage})
+
+      let handleChangeFile = jest.fn(NewBill.handleChangeFile)
+      const  fichier = getByTestId(document,"file")
+      fichier.addEventListener("change",handleChangeFile)
 
       fireEvent.change(fichier, {
         target: {
-          files: [new File(['(⌐□_□)'],'bon-type.png',{type: 'image/png', name:'bon-type.png'})]
+          files: [new File(['file content'],'bon-type.png',{type: 'image/png', name:'bon-type.png'})]
         }
       })
       
       expect(window.alert).not.toBeCalled()
     })
 
-    it("Then user select a valid justification file, alert must NOT be display ", () => {
+    it("Then user submit form, form must be submited", () => {
       const html = NewBillUI()
       document.body.innerHTML = html
-      new NewBill({document, onNavigate: ROUTES, firestore:null, localstorage: window.localStorage})
-      const submitBill = document.getElementById('btn-send-bill')
-      expect(submitBill).toBeTruthy()
-      
-      const billForm = getByTestId(document,"form-new-bill")
-      firestore.store.collection = jest.fn()
-      fireEvent.click(submitBill)
-      billForm.onSubmit = true
 
-      expect(billForm.onSubmit).toBe(true)
+      const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({ pathname })
+      }
+      const testNewBills = new NewBill({document, onNavigate, firestore:null, localstorage: window.localStorage})
+      const billForm = getByTestId(document,"form-new-bill")
+      const handleSubmit = jest.fn(event => NewBill.handleSubmit)
+      billForm.addEventListener('submit',handleSubmit)
+
+      fireEvent.submit(billForm)
+
+      expect(handleSubmit).toBeCalled()
     })
 
     // post integration test

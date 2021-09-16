@@ -1,9 +1,10 @@
 {
   "scripts": {
-    "test": "jest --coverage --noStackTrace --silent"
+    "testCover": "jest --coverage --noStackTrace --silent",
+    "test": "jest --coverage"
   },
   "jest": {
-    "verbose": true,
+    "verbose": false,
     "setupFiles": [
       "./setup-jest.js"
     ],

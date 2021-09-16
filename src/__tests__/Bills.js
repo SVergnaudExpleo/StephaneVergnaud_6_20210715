@@ -16,29 +16,18 @@ import {
 
 // import project function
 import {default as BillsUI} from "../views/BillsUI.js"
-import {default as NewBillUI } from "../views/NewBillUI"
 import { bills } from "../fixtures/bills.js"
 import Bills from "../containers/Bills"
-import LoadingPage from "../views/LoadingPage.js"
-import ErrorPage from "../views/ErrorPage"
 import {localStorageMock} from "../__mocks__/localStorage"
 import { ROUTES } from "../constants/routes"
-import {default as Router} from "../app/Router"
-import Login, { PREVIOUS_LOCATION } from "../containers/Login.js"
-import LoginUI from "../views/LoginUI"
-import VerticalLayout from '../views/VerticalLayout'
-import { formatDate, formatStatus } from "../app/format.js"
 import firebase from "../__mocks__/firebase.js"
-import Firestore from '../app/Firestore'
+
 
 describe("Given I am connected as an employee", () => {
   beforeEach(()=>{
     Object.defineProperty(window, 'localStorage', { value: localStorageMock })
     window.localStorage.setItem('user', JSON.stringify({
       type: 'Employee',
-      //email:'mail@mail.com',
-      //password:'azerty',
-      //status:'connected'
     }))
   })
 
