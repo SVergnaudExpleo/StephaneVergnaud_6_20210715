@@ -55,7 +55,7 @@ describe("Given I am connected as an employee", () => {
       expect(window.alert).toBeCalled()
     })
 
-    it.only("Then user select a valid justification file, alert must NOT be display ", () => {
+    it("Then user select a valid justification file, alert must NOT be display ", () => {
       const html = NewBillUI()
       document.body.innerHTML = html
       window.alert = jest.fn()
